@@ -1,6 +1,6 @@
 <h1 align="center">
   <img src="./public/favicon.ico" alt="Data Formulator icon" width="28">&nbsp;
-  Data Formulator: AI-powered Data Visualization
+  Data Formulator (forked): AI-powered Data Visualization
 </h1>
 
 
