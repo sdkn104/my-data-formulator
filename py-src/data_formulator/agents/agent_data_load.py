@@ -24,7 +24,6 @@ Given a dataset provided by the user,
 Types to consider include: string, number, date
 Semantic types to consider include: Location, Decade, Year, Month, YearMonth, Day, Date, Time, DateTime, TimeRange, Range, Duration, Name, Percentage, String, Number
 
-
 Sort order:
 
 - if the field is string type and is ordinal, provide the natural sort order of the fields here.

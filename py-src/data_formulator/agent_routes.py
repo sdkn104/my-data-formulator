@@ -525,6 +525,9 @@ def explore_data_streaming():
             'Access-Control-Allow-Headers': 'Content-Type'
         }
     )
+    print("@@@ response of /explore-data-streaming:")
+    from pprint import pprint
+    pprint(response.choices[0].message.content)
     return response
 
 

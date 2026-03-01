@@ -425,7 +425,7 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
                 body: messageBody,
                 signal: controller.signal
             });
-
+            console.log("@@@ getIdeasForVisualization response @@@", response);
             clearTimeout(timeoutId);
 
             if (!response.ok) {

@@ -9,6 +9,7 @@ import data_formulator.py_sandbox as py_sandbox
 
 import traceback
 import logging
+from pprint import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,8 @@ Concretely, you should infer the appropriate data and create in the output secti
         "facet": "",
     } // object: map visualization channels (x, y, color, size, opacity, facet, etc.) to a subset of output fields, appropriate visual channels for different chart types are defined below.
 }
+
+output_fieldsは、日本語で出力してください。
 
 Concretely:
     - recap what the user's goal is in a short summary in "recap".
@@ -266,6 +269,8 @@ class PythonDataRecAgent(object):
             json_blocks = extract_json_objects(choice.message.content + "\n")
             if len(json_blocks) > 0:
                 refined_goal = json_blocks[0]
+                print("@@@ Recommendation json block:")
+                pprint(json_blocks)
             else:
                 refined_goal = { 'mode': "", 'recommendation': "", 'input_tables': [], 'output_fields': [], 'chart_encodings': {}, 'chart_type': "" }
 

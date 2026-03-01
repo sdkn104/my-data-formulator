@@ -53,6 +53,7 @@ Guidelines for question suggestions:
     - include a 'tag' to describe the type of the question.
     
 Output should be a list of json objects in the following format, each line should be a json object representing a question, starting with 'data:':
+questionとgoalは日本語で記述してください。
 
 Format:
 
@@ -203,11 +204,12 @@ class InteractiveExploreAgent(object):
 
         accumulated_content = ""
         
+        print("@@@ response of InteractiveExploreAgent.run:")
         for part in stream:
             if hasattr(part, 'choices') and len(part.choices) > 0:
                 delta = part.choices[0].delta
                 if hasattr(delta, 'content') and delta.content:
                     accumulated_content += delta.content
-                    
+                    print(part.choices[0].delta.content, end='')
                     # Stream each character for real-time display as JSON
                     yield delta.content

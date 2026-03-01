@@ -453,6 +453,9 @@ export const assembleVegaChart = (
     addTooltips: boolean = false
 ) => {
 
+    console.log("@@@ arguments of assembleVegaChart @@@");
+    console.log({chartType, encodingMap, conceptShelfItems, workingTable, tableMetadata, maxFacetNominalValues, aggrPreprocessed, defaultChartWidth, defaultChartHeight, addTooltips});
+
     if (chartType == "Table") {
         return ["Table", undefined];
     }
@@ -1072,6 +1075,8 @@ export const assembleVegaChart = (
         vgObj.mark.tooltip = true;
     }
 
+    console.log("@@@ Vaga-Lite Object @@@");
+    console.log(vgObj);
     return {...vgObj, data: {values: values}}
 }
 

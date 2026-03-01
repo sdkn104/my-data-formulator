@@ -88,7 +88,8 @@ def configure_logging():
     """Configure logging for the Flask application."""
     # Configure root logger for general application logging
     logging.basicConfig(
-        level=logging.ERROR,
+        #level=logging.ERROR,
+        level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[logging.StreamHandler(sys.stdout)]
     )

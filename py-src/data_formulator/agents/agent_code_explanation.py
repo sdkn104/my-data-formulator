@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = r'''You are a data scientist to help user explain code, 
 so that a non-code can clearly understand what the code is doing, you are provided with a summary of the input data, and the transformation code.
+explanationは必ず日本語で書いてください。ただし、データ中の列名や値、コード中の変数名は和訳しないでください。
 
 Your goal:
 1. You should generate a good itemized explanation of the code so that the reader can understand high-level steps of what the data transformation is doing.

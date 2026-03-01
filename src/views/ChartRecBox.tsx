@@ -322,6 +322,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                 body: messageBody,
                 signal: controller.signal
             });
+            console.log("@@@ getIdeasFromAgent response @@@", response);
 
             clearTimeout(timeoutId);
 
@@ -395,6 +396,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
 
             lines.push(buffer);
             updateState(lines);
+            console.log("@@@ getIdeasFromAgent lines @@@", lines);
 
             // Process the final result
             if (lines.length == 0) {
