@@ -47,8 +47,10 @@ import { getUrls, getTriggers, resolveRecommendedChart } from '../app/utils';
 
 import AddIcon from '@mui/icons-material/Add';
 import PrecisionManufacturing from '@mui/icons-material/PrecisionManufacturing';
+import SendIcon from '@mui/icons-material/Send';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Type } from '../data/types';
 import CloseIcon from '@mui/icons-material/Close';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
@@ -74,9 +76,10 @@ export const IdeaChip: FC<{
     idea: {text?: string, questions?: string[], goal: string, difficulty: 'easy' | 'medium' | 'hard', type?: 'branch' | 'deep_dive'} 
     theme: Theme, 
     onClick: () => void, 
+    onDelete?: () => void,
     sx?: SxProps,
     disabled?: boolean,
-}> = function ({mini, idea, theme, onClick, sx, disabled}) {
+}> = function ({mini, idea, theme, onClick, onDelete, sx, disabled}) {
 
     const getDifficultyColor = (difficulty: 'easy' | 'medium' | 'hard') => {
         switch (difficulty) {
@@ -130,6 +133,18 @@ export const IdeaChip: FC<{
             <Typography component="div" sx={{ fontSize: '11px', color: getDifficultyColor(idea.difficulty || 'medium') }}>
                 {ideaTextComponent}
             </Typography>
+            {onDelete && (
+                <IconButton
+                    size="small"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                    }}
+                    sx={{ ml: 0.5 }}
+                >
+                    <DeleteIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+            )}
         </Box>
     );
 };
@@ -273,7 +288,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
         if (mode === "agent") {
             setAgentIdeas([]);
         } else {
-            setIdeas([]);
+            /*setIdeas([]);*/
         }
 
         try {
@@ -322,7 +337,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                 body: messageBody,
                 signal: controller.signal
             });
-            console.log("@@@ getIdeasFromAgent response @@@", response);
+            //console.log("@@@ getIdeasFromAgent response @@@", response);
 
             clearTimeout(timeoutId);
 
@@ -371,7 +386,11 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                         difficulty: block.difficulty,
                         tag: block.tag
                     }));
-                    setIdeas(questions);
+                    /*setIdeas(questions);*/
+                    setIdeas(prev => {
+                        const merged = [...prev, ...questions];
+                        return _.uniqBy(merged, 'goal');
+                    });
                 }
             }
 
@@ -396,7 +415,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
 
             lines.push(buffer);
             updateState(lines);
-            console.log("@@@ getIdeasFromAgent lines @@@", lines);
+            //console.log("@@@ getIdeasFromAgent lines @@@", lines);
 
             // Process the final result
             if (lines.length == 0) {
@@ -414,6 +433,25 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
         } finally {
             setIsLoadingIdeas(false);
             setThinkingBuffer("");
+        }
+    };
+
+    // Function to run all ideas sequentially with a delay (Added)
+    const runAllIdeasSequentially = async () => {
+        if (isFormulating || isLoadingIdeas) return;
+        if (mode === "interactive") {
+            for (const idea of ideas) {
+                focusNextChartRef.current = true;
+                deriveDataFromNL(idea.text);
+                // 1件ずつ少し待つ（必要なら）
+                await new Promise(res => setTimeout(res, 500));
+            }
+        } else {
+            for (const idea of agentIdeas) {
+                focusNextChartRef.current = true;
+                exploreDataFromNL(idea.questions);
+                await new Promise(res => setTimeout(res, 500));
+            }
         }
     };
 
@@ -1186,7 +1224,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                                         >
                                             {isFormulating ? <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                                 <CircularProgress size={24} sx={{ color: modeColor }} />
-                                            </Box> : mode === "agent" ? <MovingIcon sx={{transform: 'rotate(90deg)', fontSize: 24}} /> : <PrecisionManufacturing sx={{fontSize: 24}} />}
+                                            </Box> : mode === "agent" ? <MovingIcon sx={{transform: 'rotate(90deg)', fontSize: 24}} /> : <SendIcon sx={{fontSize: 24}} />}
                                         </IconButton>
                                     </span>
                                 </Tooltip>
@@ -1203,7 +1241,7 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                     {<Divider orientation="vertical" flexItem />}
                     {<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 0.5, my: 1}}>
                         <Typography sx={{ fontSize: 10, color: "text.secondary", marginBottom: 0.5 }}>
-                            ideas?
+                            {ideas.length === 0 ? "ideas?" : "MORE ideas?"}
                         </Typography>
                         <Tooltip title="Get some ideas!">   
                             <span>
@@ -1257,7 +1295,10 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                             onClick={() => {
                                 focusNextChartRef.current = true;
                                 setPrompt(idea.text);
-                                deriveDataFromNL(idea.text);
+                                /*deriveDataFromNL(idea.text);*/
+                            }}
+                            onDelete={() => {
+                                setIdeas(prev => prev.filter((_, i) => i !== index));
                             }}
                             disabled={isFormulating}
                             sx={{
@@ -1266,6 +1307,19 @@ export const ChartRecBox: FC<ChartRecBoxProps> = function ({ tableId, placeHolde
                         />
                     ))}
                     {isLoadingIdeas && thinkingBuffer && thinkingBufferEffect}
+
+                    {ideas.length > 0 && (
+                        <Box sx={{ width: '100%', mt: 1, justifyContent: 'center', textAlign: 'center' }}>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={runAllIdeasSequentially}
+                                disabled={isFormulating || isLoadingIdeas}
+                            >
+                                Generate All
+                            </Button>
+                        </Box>
+                    )}
                 </Box>
             )}
             {mode === 'agent' && (agentIdeas.length > 0 || thinkingBuffer) && (

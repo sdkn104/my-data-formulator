@@ -168,6 +168,7 @@ export const convertToChartifact = (reportMarkdown: string, reportStyle: string,
                 const vegaSpec = assembleVegaChart(
                     chart.chartType,
                     chart.encodingMap,
+                    chart.vegaLite,
                     conceptShelfItems,
                     processedRows,
                     chartTable.metadata,

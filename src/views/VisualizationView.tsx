@@ -196,7 +196,8 @@ export let checkChartAvailabilityOnPreparedData = (chart: Chart, conceptShelfIte
                 }
                 return undefined;
             }).filter(f => f != undefined);
-    return visFieldsFinalNames.length > 0 && visTableRows.length > 0 && visFieldsFinalNames.every(name => Object.keys(visTableRows[0]).includes(name));
+    return true;
+    //return visFieldsFinalNames.length > 0 && visTableRows.length > 0 && visFieldsFinalNames.every(name => Object.keys(visTableRows[0]).includes(name));
 }
 
 export let checkChartAvailability = (chart: Chart, conceptShelfItems: FieldItem[], visTableRows: any[]) => {
@@ -204,7 +205,8 @@ export let checkChartAvailability = (chart: Chart, conceptShelfItems: FieldItem[
             .filter(key => chart.encodingMap[key as keyof EncodingMap].fieldID != undefined)
             .map(key => chart.encodingMap[key as keyof EncodingMap].fieldID);
     let visFields = conceptShelfItems.filter(f => visFieldIds.includes(f.id));
-    return visFields.length > 0 && visTableRows.length > 0 && visFields.every(f => Object.keys(visTableRows[0]).includes(f.name));
+    return true;
+    //return visFields.length > 0 && visTableRows.length > 0 && visFields.every(f => Object.keys(visTableRows[0]).includes(f.name));
 }
 
 export let SampleSizeEditor: FC<{
@@ -304,6 +306,7 @@ const VegaChartRenderer: FC<{
         const assembledChart = assembleVegaChart(
             chart.chartType, 
             chart.encodingMap, 
+            chart.vegaLite,
             conceptShelfItems, 
             visTableRows, 
             tableMetadata, 
@@ -322,8 +325,9 @@ const VegaChartRenderer: FC<{
         .then(function (result) {
             // any post-processing of the canvas can go here
         }).catch((error) => {
-            //console.error('Chart rendering error:', error);
+            console.error('Chart rendering error:', error);
         });
+        console.log(`@@@ VegaChartRenderer embed`, elementId);
 
     }, [chart.id, chart.chartType, chart.encodingMap, conceptShelfItems, visTableRows, tableMetadata, chartWidth, chartHeight, scaleFactor, chartUnavailable]);
 
@@ -339,12 +343,12 @@ const VegaChartRenderer: FC<{
         </Box>;
     }
 
-    const chartTemplate = getChartTemplate(chart.chartType);
-    if (!checkChartAvailabilityOnPreparedData(chart, conceptShelfItems, visTableRows)) {
-        return <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
-            {generateChartSkeleton(chartTemplate?.icon, 48, 48)}
-        </Box>
-    }
+    // const chartTemplate = getChartTemplate(chart.chartType);
+    // if (!checkChartAvailabilityOnPreparedData(chart, conceptShelfItems, visTableRows)) {
+    //     return <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+    //         {generateChartSkeleton(chartTemplate?.icon, 48, 48)}
+    //     </Box>
+    // }
 
     return <Box id={elementId} sx={{mx: 2}}></Box>;
 });
@@ -1045,14 +1049,16 @@ export const VisualizationViewFC: FC<VisPanelProps> = function VisualizationView
             )}
             </Box>
         return (
-            <Box sx={{  margin: "auto" }}>
+            <Box sx={{  margin: "auto", width: "666px" }}>
                 {focusedTableId ? <ChartRecBox sx={{margin: 'auto'}} tableId={focusedTableId as string} placeHolderChartId={focusedChartId as string} /> : null}
+                {/*
                 <Divider sx={{my: 3}} textAlign='left'>
                     <Typography sx={{fontSize: 12, color: "text.secondary"}}>
                         or, start with a chart type
                     </Typography>
                 </Divider>
                 {chartSelectionBox}
+                */}
             </Box>
         )
     }

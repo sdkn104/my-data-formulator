@@ -228,7 +228,7 @@ export const TriggerCard: FC<{
             ...sx,
         }} 
         onClick={handleClick}>
-        <Box sx={{mx: 1, my: 0.5}}>
+        <Box sx={{mx: 1, my: 0.5}}> xxxx
             {hideFields ? "" : <Typography component="div" fontSize="inherit" sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center',
                             color: 'rgba(0,0,0,0.7)'}}>{encodingComp}</Typography>}
             <Typography fontSize="inherit" sx={{
@@ -392,7 +392,7 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
             }
 
             let chartAvailable = checkChartAvailability(chart, conceptShelfItems, currentTable.rows);
-            let currentChartPng = chartAvailable ? await vegaLiteSpecToPng(assembleVegaChart(chart.chartType, chart.encodingMap, activeFields, currentTable.rows, currentTable.metadata, 20)) : undefined;
+            let currentChartPng = chartAvailable ? await vegaLiteSpecToPng(assembleVegaChart(chart.chartType, chart.encodingMap, chart.vegaLite, activeFields, currentTable.rows, currentTable.metadata, 20)) : undefined;
 
             let actionTables = actionTableIds.map(id => tables.find(t => t.id == id) as DictTable);
 
@@ -1022,6 +1022,57 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
     let channelComponent = (
         <Box sx={{ width: "100%", minWidth: "210px", height: '100%', display: "flex", flexDirection: "column" }}>
             <Box key='mark-selector-box' sx={{ flex: '0 0 auto' }}>
+                {/* <FormControl> */}
+
+            </Box>
+            <Box key='encoding-groups' sx={{ flex: '1 1 auto' }} style={{ height: "calc(100% - 100px)" }} className="encoding-list">
+                {/*encodingBoxGroups*/}
+            </Box>
+            {formulateInputBox}
+        </Box>);
+
+    const encodingShelfCard = (
+        <Card variant='outlined' sx={{ 
+            padding: 0, 
+            maxWidth: "400px", 
+            display: 'flex', 
+            flexDirection: 'column', 
+            backgroundColor: trigger ? "rgba(255, 160, 122, 0.07)" : "" 
+        }}>
+            <ModeToggleHeader />
+            {ideateMode ? (
+                <Box sx={{ padding: 1 }}>
+                    <Tooltip title={`get ideas for visualization`}>
+                        <span>
+                            <Button 
+                                variant="text"
+                                disabled={isLoadingIdeas} 
+                                color={"primary"} 
+                                size="small"
+                                onClick={() => { getIdeasForVisualization(); }}
+                                startIcon={isLoadingIdeas ? undefined : <LightbulbOutlinedIcon sx={{fontSize: 10}} />}
+                                sx={{
+                                    fontSize: 12,
+                                    textTransform: 'none',
+                                }}
+                            >
+                                {isLoadingIdeas ? ThinkingBanner('ideating...') : currentChartIdeas.length > 0 ? "Different ideas?" : "Get Ideas?"} 
+                            </Button>
+                        </span>
+                    </Tooltip>
+                    {ideasSection}
+                </Box>
+            ) : (
+                <Box sx={{ padding: 1 }}>
+                    {channelComponent}
+                </Box>
+            )}
+        </Card>
+    );
+
+    return encodingShelfCard;
+}
+/*
                 <FormControl sx={{ m: 1, minWidth: 120, width: "100%", margin: "0px 0"}} size="small">
                     <Select
                         variant="standard"
@@ -1110,54 +1161,7 @@ export const EncodingShelfCard: FC<EncodingShelfCardProps> = function ({ chartId
                         })}
                     </Select>
                 </FormControl>
-            </Box>
-            <Box key='encoding-groups' sx={{ flex: '1 1 auto' }} style={{ height: "calc(100% - 100px)" }} className="encoding-list">
-                {encodingBoxGroups}
-            </Box>
-            {formulateInputBox}
-        </Box>);
-
-    const encodingShelfCard = (
-        <Card variant='outlined' sx={{ 
-            padding: 0, 
-            maxWidth: "400px", 
-            display: 'flex', 
-            flexDirection: 'column', 
-            backgroundColor: trigger ? "rgba(255, 160, 122, 0.07)" : "" 
-        }}>
-            <ModeToggleHeader />
-            {ideateMode ? (
-                <Box sx={{ padding: 1 }}>
-                    <Tooltip title={`get ideas for visualization`}>
-                        <span>
-                            <Button 
-                                variant="text"
-                                disabled={isLoadingIdeas} 
-                                color={"primary"} 
-                                size="small"
-                                onClick={() => { getIdeasForVisualization(); }}
-                                startIcon={isLoadingIdeas ? undefined : <LightbulbOutlinedIcon sx={{fontSize: 10}} />}
-                                sx={{
-                                    fontSize: 12,
-                                    textTransform: 'none',
-                                }}
-                            >
-                                {isLoadingIdeas ? ThinkingBanner('ideating...') : currentChartIdeas.length > 0 ? "Different ideas?" : "Get Ideas?"} 
-                            </Button>
-                        </span>
-                    </Tooltip>
-                    {ideasSection}
-                </Box>
-            ) : (
-                <Box sx={{ padding: 1 }}>
-                    {channelComponent}
-                </Box>
-            )}
-        </Card>
-    );
-
-    return encodingShelfCard;
-}
+*/
 
 // Function to convert Vega-Lite spec to PNG data URL with improved resolution
 const vegaLiteSpecToPng = async (spec: any, scale: number = 2.0, quality: number = 1.0): Promise<string | null> => {

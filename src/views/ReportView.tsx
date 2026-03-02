@@ -558,6 +558,7 @@ export const ReportView: FC = () => {
             const assembledChart = assembleVegaChart(
                 chart.chartType,
                 chart.encodingMap,
+                chart.vegaLite,
                 conceptShelfItems,
                 processedRows,
                 chartTable.metadata,

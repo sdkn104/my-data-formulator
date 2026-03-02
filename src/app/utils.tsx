@@ -443,6 +443,7 @@ export function prepVisTable(table: any[], allFields: FieldItem[], encodingMap: 
 export const assembleVegaChart = (
     chartType: string, 
     encodingMap: { [key in Channel]: EncodingItem; }, 
+    vegaLite: any | undefined,
     conceptShelfItems: FieldItem[], 
     workingTable: any[],
     tableMetadata: {[key: string]: {type: Type, semanticType: string, levels: any[]}},
@@ -454,7 +455,7 @@ export const assembleVegaChart = (
 ) => {
 
     console.log("@@@ arguments of assembleVegaChart @@@");
-    console.log({chartType, encodingMap, conceptShelfItems, workingTable, tableMetadata, maxFacetNominalValues, aggrPreprocessed, defaultChartWidth, defaultChartHeight, addTooltips});
+    console.log({chartType, encodingMap, vegaLite, conceptShelfItems, workingTable, tableMetadata, maxFacetNominalValues, aggrPreprocessed, defaultChartWidth, defaultChartHeight, addTooltips});
 
     if (chartType == "Table") {
         return ["Table", undefined];
@@ -1075,8 +1076,17 @@ export const assembleVegaChart = (
         vgObj.mark.tooltip = true;
     }
 
+    
+    if (vegaLite !== undefined) {
+        //let values = structuredClone(workingTable);
+        let vgObj = vegaLite;
+        console.log("@@@ Vaga-Lite Object (vega-lite) @@@");
+        console.log({...vgObj, data: {values: values}});
+        return {...vgObj, data: {values: values}}
+    }
+
     console.log("@@@ Vaga-Lite Object @@@");
-    console.log(vgObj);
+    console.log({...vgObj, data: {values: values}});
     return {...vgObj, data: {values: values}}
 }
 
@@ -1103,11 +1113,24 @@ export const adaptChart = (chart: Chart, targetTemplate: ChartTemplate) => {
     return { ...chart, chartType: targetTemplate.chart, encodingMap: newEncodingMap }
 }
 
+import { CHANNEL_LIST } from "../components/ChartTemplates"
+
 export const resolveRecommendedChart = (refinedGoal: any, allFields: FieldItem[], table: DictTable) => {
     
     let rawChartType = refinedGoal['chart_type'];
     let chartEncodings = refinedGoal['chart_encodings'];
+    let vegaLite = refinedGoal['vega_lite'];
 
+    if (vegaLite != undefined) {
+        let newChart = generateFreshChart(table.id, 'Scatter Plot') as Chart;
+        let basicEncodings : { [key: string]: string } = table.names.length > 1 ? {x: table.names[0], y: table.names[1]} : {};
+        newChart = resolveChartFields(newChart, allFields, basicEncodings, table);
+        Object.keys(newChart.encodingMap).forEach((key) => {
+            newChart.encodingMap[key as keyof typeof newChart.encodingMap] = {};
+        });
+        newChart.vegaLite = vegaLite;
+        return newChart;
+    }
     if (chartEncodings == undefined || rawChartType == undefined) {
         let newChart = generateFreshChart(table.id, 'Scatter Plot') as Chart;
         let basicEncodings : { [key: string]: string } = table.names.length > 1 ? {x: table.names[0], y: table.names[1]} : {};

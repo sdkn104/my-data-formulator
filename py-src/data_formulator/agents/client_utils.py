@@ -97,7 +97,7 @@ class Client(object):
         Returns a LiteLLM client configured for the specified endpoint and model.
         Supports OpenAI, Azure, Ollama, and other providers via LiteLLM.
         """
-        print(f"@@@ START Client.get_completion with messages {messages}")
+        print(f"@@@ START Client.get_completion")
         # Configure LiteLLM 
 
         if self.endpoint == "openai":

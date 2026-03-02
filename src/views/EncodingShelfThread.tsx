@@ -85,7 +85,7 @@ export let ChartElementFC: FC<{
     // }
 
     // prepare the chart to be rendered
-    let assembledChart = assembleVegaChart(chart.chartType, chart.encodingMap, conceptShelfItems, tableRows, tableMetadata, 20);
+    let assembledChart = assembleVegaChart(chart.chartType, chart.encodingMap, chart.vegaLite, conceptShelfItems, tableRows, tableMetadata, 20);
     assembledChart["background"] = "transparent";
     // chart["autosize"] = {
     //     "type": "fit",
@@ -231,7 +231,7 @@ export const EncodingShelfThread: FC<EncodingShelfThreadProps> = function ({ cha
                 trigger={trigger} 
                 hideFields={trigger.instruction != ""} 
                 mini={true} />
-            <Box sx={{ml: '8px', height: '4px', borderLeft: '1px solid darkgray'}}></Box>
+            <Box sx={{ml: '8px', height: '4px', borderLeft: '1px solid darkgray'}}>XXXXXXXX</Box>
         </Box>
     })
     
@@ -319,6 +319,7 @@ export const EncodingShelfThread: FC<EncodingShelfThreadProps> = function ({ cha
                                         backgroundImage: 'linear-gradient(180deg, darkgray, darkgray 75%, transparent 75%, transparent 100%)',
                                         backgroundSize: '1px 6px, 3px 100%'}}></Box>
             </Box>
+ 
             <EncodingShelfCard chartId={chartId}/>
             {postInstruction}
             <Box sx={{height: '12px'}}></Box>

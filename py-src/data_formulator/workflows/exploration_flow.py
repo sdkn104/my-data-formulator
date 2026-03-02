@@ -70,7 +70,7 @@ def run_exploration_flow_streaming(
     agent_exploration_rules: str = "",
     agent_coding_rules: str = ""
 ) -> Generator[Dict[str, Any], None, None]:
-    print("@@@ run_exploration_flow_streaming start @@@", {model_config, input_tables, initial_plan, language, session_id, exec_python_in_subprocess, max_iterations, max_repair_attempts, agent_exploration_rules, agent_coding_rules})
+    print("@@@ run_exploration_flow_streaming start @@@", model_config, input_tables, initial_plan, language, session_id, exec_python_in_subprocess, max_iterations, max_repair_attempts, agent_exploration_rules, agent_coding_rules)
     """
     Run the complete exploration flow from high-level question to final insights as a streaming generator.
     

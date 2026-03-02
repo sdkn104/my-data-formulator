@@ -184,6 +184,7 @@ export type Chart = {
     id: string, 
     chartType: string, 
     encodingMap: EncodingMap, 
+    vegaLite?: any, 
     tableRef: string, 
     saved: boolean,
     source: "user" | "trigger",

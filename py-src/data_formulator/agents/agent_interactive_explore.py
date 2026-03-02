@@ -106,6 +106,7 @@ Guidelines for question suggestions:
     - include 'difficulty' to indicate the difficulty of the question, it should be one of 'easy', 'medium', 'hard'
 
 Output should be a list of json objects in the following format, each line should be a json object representing a question group, starting with 'data: ':
+questionとgoalは日本語で記述してください。
 
 Format:
 
