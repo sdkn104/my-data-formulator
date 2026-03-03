@@ -89,7 +89,7 @@ yarn start
                 - VisualizationViewFC - main chart
                     - ChartEditorFC
                         - header (zoom, etc)
-                        - VegaChartRenderer  
+                        - VegaChartRenderer  (チャート)
                         - footer (chat, code, explain, etc)
                         - EncodingShelfThread 左パネル
                             - previousInstructions テーブル履歴
@@ -185,6 +185,8 @@ yarn start
 - -> GUI
     - Question -> prompt box
     - Goal -> idea title
+- -> redux
+    - setIdeas(questions = {question, goal, difficulity})
 
 - (select ideas) Recommend Agent returns:　use only Goal
     - "recap": "Rank students based on their average scores",  short summary of goal
@@ -194,6 +196,9 @@ yarn start
     - display_instruction -> title
     - recap, recommendation -> chat内に表示
     - Goal -> prompt box
-
+- -> redux
+    - let newChart = resolveRecommendedChart(refinedGoal, currentConcepts, candidateTable); Chart type
+    - dispatch(dfActions.addChart(newChart));
+    
 - input prompt box, send to Agent (/derive-data)
     - prompt -> Goal

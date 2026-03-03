@@ -62,6 +62,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 import InfoIcon from '@mui/icons-material/Info';
 import CasinoIcon from '@mui/icons-material/Casino';
+import SendIcon from '@mui/icons-material/Send';
 
 import { CHART_TEMPLATES, getChartTemplate } from '../components/ChartTemplates';
 
@@ -327,7 +328,7 @@ const VegaChartRenderer: FC<{
         }).catch((error) => {
             console.error('Chart rendering error:', error);
         });
-        console.log(`@@@ VegaChartRenderer embed`, elementId);
+        //console.log(`@@@ VegaChartRenderer embed`, elementId);
 
     }, [chart.id, chart.chartType, chart.encodingMap, conceptShelfItems, visTableRows, tableMetadata, chartWidth, chartHeight, scaleFactor, chartUnavailable]);
 
@@ -350,7 +351,9 @@ const VegaChartRenderer: FC<{
     //     </Box>
     // }
 
-    return <Box id={elementId} sx={{mx: 2}}></Box>;
+    //return <Box id={elementId} sx={{mx: 2}}></Box>;
+
+    return <Box id={elementId} sx={{ mx: 2 }} />;
 });
 
 
@@ -374,6 +377,9 @@ export const ChartEditorFC: FC<{}> = function ChartEditorFC({}) {
     let focusedChart = charts.find(c => c.id == focusedChartId) as Chart;
     let trigger = focusedChart.source == "trigger" ? tables.find(t => t.derive?.trigger?.chart?.id == focusedChartId)?.derive?.trigger : undefined;
 
+    let focusedChartTable = tables.find(t => t.id == focusedChart.tableRef)
+    console.log(`@@ instruction`, focusedChartTable?.derive?.trigger.instruction);
+ 
     const dispatch = useDispatch();
 
     const conceptShelfItems = useSelector((state: DataFormulatorState) => state.conceptShelfItems);
@@ -864,6 +870,53 @@ export const ChartEditorFC: FC<{}> = function ChartEditorFC({}) {
                             in={!isDataStale} timeout={600}>    
                             <Box sx={{display: "flex", flexDirection: "column", flexShrink: 0, justifyContent: 'center', justifyItems: 'center'}} className="chart-box">
                                 <Box sx={{m: 'auto', minHeight: 240, overflow: "auto"}}>
+
+                                    {/* 🔹 プロンプトボックス */}
+                                    <Box sx={{
+                                        display: "flex",
+                                        gap: 1,
+                                        mb: 2,
+                                        px: 2
+                                    }}>
+                                        <TextField
+                                            sx={{
+                                                "& .MuiInputBase-input": {
+                                                    flex: 1,
+                                                    fontSize: 12,
+                                                }
+                                            }}
+                                            placeholder="Describe a new chart..."
+                                            defaultValue={focusedChartTable?.derive?.trigger.instruction || ''}
+                                            fullWidth
+                                            multiline
+                                            maxRows={4}
+                                            minRows={2}
+
+                                            slotProps={{
+                                                inputLabel: { shrink: true },
+                                                input: {
+                                                    endAdornment: <Tooltip title="Generate chart from description">
+                                                        <span>
+                                                            <IconButton 
+                                                                size="medium"
+                                                                sx={{
+                                                                    color: "blue",
+                                                                    '&:hover': {
+                                                                        backgroundColor: "lightblue",
+                                                                    }
+                                                                }}
+                                                                onClick={() => { 
+                                                                        /*deriveDataFromNL(prompt.trim());*/
+                                                                }}                                                            >
+                                                                <SendIcon sx={{fontSize: 24}} />
+                                                            </IconButton>
+                                                        </span>
+                                                    </Tooltip>
+                                                }
+                                            }}
+                                        />
+                                    </Box>
+
                                     <VegaChartRenderer
                                         key={focusedChart.id}
                                         chart={focusedChart}
