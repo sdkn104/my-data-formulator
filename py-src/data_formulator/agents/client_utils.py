@@ -2,6 +2,7 @@ import litellm
 import openai
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from typing import Dict, Optional, Union
+from pprint import pprint
 
 class OpenAIClientAdapter(object):
     """
@@ -97,7 +98,8 @@ class Client(object):
         Returns a LiteLLM client configured for the specified endpoint and model.
         Supports OpenAI, Azure, Ollama, and other providers via LiteLLM.
         """
-        print(f"@@@ START Client.get_completion")
+        print(f"@@@ START Client.get_completion:")
+        #pprint(messages)
         # Configure LiteLLM 
 
         if self.endpoint == "openai":

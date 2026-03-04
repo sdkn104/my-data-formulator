@@ -85,6 +85,8 @@ import { ChartRecBox } from './ChartRecBox';
 import { CodeExplanationCard, ConceptExplCards, extractConceptExplanations } from './ExplComponents';
 import CodeIcon from '@mui/icons-material/Code';
 
+import { Tabs, Tab } from "@mui/material";
+
 export interface VisPanelProps { }
 
 export interface VisPanelState {
@@ -393,6 +395,12 @@ export const ChartEditorFC: FC<{}> = function ChartEditorFC({}) {
 
     const [chatDialogOpen, setChatDialogOpen] = useState<boolean>(false);
     const [localScaleFactor, setLocalScaleFactor] = useState<number>(1);
+
+
+    const [promptTab, setPromptTab] = useState<"generate" | "refine">("generate");
+    const [generatePrompt, setGeneratePrompt] = useState<string>("");
+    const [refinePrompt, setRefinePrompt] = useState<string>("");
+
 
     // Reset local UI state when focused chart changes
     useEffect(() => {
@@ -869,52 +877,132 @@ export const ChartEditorFC: FC<{}> = function ChartEditorFC({}) {
     let focusedElement = <Fade key={`fade-${focusedChart.id}-${dataVersion}-${focusedChart.chartType}-${JSON.stringify(focusedChart.encodingMap)}`} 
                             in={!isDataStale} timeout={600}>    
                             <Box sx={{display: "flex", flexDirection: "column", flexShrink: 0, justifyContent: 'center', justifyItems: 'center'}} className="chart-box">
-                                <Box sx={{m: 'auto', minHeight: 240, overflow: "auto"}}>
+                                <Box sx={{m: 'auto', minHeight: 240, overflow: "auto",  alignItems: "center", display: "flex", flexDirection: "column"}}>
 
                                     {/* 🔹 プロンプトボックス */}
                                     <Box sx={{
                                         display: "flex",
-                                        gap: 1,
-                                        mb: 2,
-                                        px: 2
+                                        flexDirection: "column",
+                                        gap: 0, mb: 0,  px: 0
                                     }}>
-                                        <TextField
-                                            sx={{
-                                                "& .MuiInputBase-input": {
-                                                    flex: 1,
-                                                    fontSize: 12,
-                                                }
-                                            }}
-                                            placeholder="Describe a new chart..."
-                                            defaultValue={focusedChartTable?.derive?.trigger.instruction || ''}
-                                            fullWidth
-                                            multiline
-                                            maxRows={4}
-                                            minRows={2}
+                                        <Box sx={{ p: 0, mb: 0.2, gap:0 }}>
+                                            <Tabs
+                                                value={promptTab}
+                                                onChange={(_, value) => setPromptTab(value)}
+                                                sx={{
+                                                    px:2, py:0, m:0, gap:0,
+                                                    minHeight: 20,
+                                                    "& .MuiTab-root": {
+                                                        minHeight: 20,
+                                                        fontSize: 10,
+                                                        textTransform: "none"
+                                                    }
+                                                }}
+                                            >
+                                                <Tab label="Generate New" value="generate" sx={{px: 0.4, py:0, mx: 0.2, minWidth:0}} />
+                                                <Tab label="Refine Design" value="refine" sx={{px: 0.4, py:0, mx: 0.2, minWidth:0}} />
+                                            </Tabs>
+                                        </Box>
 
-                                            slotProps={{
-                                                inputLabel: { shrink: true },
-                                                input: {
-                                                    endAdornment: <Tooltip title="Generate chart from description">
-                                                        <span>
-                                                            <IconButton 
-                                                                size="medium"
-                                                                sx={{
-                                                                    color: "blue",
-                                                                    '&:hover': {
-                                                                        backgroundColor: "lightblue",
-                                                                    }
-                                                                }}
-                                                                onClick={() => { 
-                                                                        /*deriveDataFromNL(prompt.trim());*/
-                                                                }}                                                            >
-                                                                <SendIcon sx={{fontSize: 24}} />
-                                                            </IconButton>
-                                                        </span>
-                                                    </Tooltip>
-                                                }
+                                        {/* Generate Prompt Box */}
+                                        <Box
+                                            sx={{
+                                                display: promptTab === "generate" ? "flex" : "none",
+                                                gap: 1,
+                                                mb: 2,
+                                                px: 2,
                                             }}
-                                        />
+                                        >
+                                            <TextField
+                                                sx={{
+                                                    "& .MuiInputBase-input": {
+                                                        flex: 1,
+                                                        fontSize: 12,
+                                                    },
+                                                    minWidth: 500
+                                                }}
+                                                placeholder="Describe a new chart..."
+                                                defaultValue={focusedChartTable?.derive?.trigger.instruction || ''}
+                                                fullWidth
+                                                multiline
+                                                maxRows={4}
+                                                minRows={2}
+
+                                                slotProps={{
+                                                    inputLabel: { shrink: true },
+                                                    input: {
+                                                        endAdornment: <Tooltip title="Generate chart from description">
+                                                            <span>
+                                                                <IconButton 
+                                                                    size="medium"
+                                                                    sx={{
+                                                                        color: "blue",
+                                                                        '&:hover': {
+                                                                            backgroundColor: "lightblue",
+                                                                        }
+                                                                    }}
+                                                                    onClick={() => { 
+                                                                            /*deriveDataFromNL(prompt.trim());*/
+                                                                    }}                                                            >
+                                                                    <SendIcon sx={{fontSize: 24}} />
+                                                                </IconButton>
+                                                            </span>
+                                                        </Tooltip>
+                                                    }
+                                                }}
+                                            />
+                                        </Box>
+
+                                        <Box
+                                            sx={{
+                                                display: promptTab === "generate" ? "none" : "flex",
+                                                gap: 1,
+                                                mb: 2,
+                                                px: 2
+                                            }}
+                                        >
+                                            {/* Refine Prompt Box */}
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                minRows={2}
+                                                maxRows={4}
+                                                placeholder="Describe how to refine this chart..."
+                                                value={refinePrompt}
+                                                onChange={(e) => setRefinePrompt(e.target.value)}
+                                                sx={{
+                                                    "& .MuiInputBase-input": {
+                                                        fontSize: 12
+                                                    },
+                                                    minWidth: 500
+                                                }}
+                                                slotProps={{
+                                                    input: {
+                                                        endAdornment: (
+                                                            <Tooltip title="Refine current chart">
+                                                                <span>
+                                                                    <IconButton
+                                                                        size="medium"
+                                                                        sx={{
+                                                                            color: "blue",
+                                                                            "&:hover": { backgroundColor: "lightblue" }
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            const prompt = refinePrompt.trim();
+                                                                            if (!prompt) return;
+
+                                                                            // refineChartFromNL(prompt)
+                                                                        }}
+                                                                    >
+                                                                        <SendIcon sx={{ fontSize: 24 }} />
+                                                                    </IconButton>
+                                                                </span>
+                                                            </Tooltip>
+                                                        )
+                                                    }
+                                                }}
+                                            />
+                                        </Box>
                                     </Box>
 
                                     <VegaChartRenderer

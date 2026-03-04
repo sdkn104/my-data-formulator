@@ -125,7 +125,7 @@ yarn start
 
 # SEQUENCE
 
-1. data_formulator.agents.agent_data_load
+1. (data load) data_formulator.agents.agent_data_load
     - DataLoadAgent
         - -> table name, fields, "data summary"
 1. (idea?) /api/agent/get-recommendation-questions -> data_formulator.agents.agent_interactive_explore   (either agent or not)
@@ -175,6 +175,18 @@ yarn start
 1. (formulate data) /refine-data -> SQLDataTransformationAgent or PythonDataTransformationAgent　メソッドfollowup()
     - py-src\data_formulator\agents\agent_py_data_transform.py
         - PythonDataRecAgent とほぼ同じ
+        - call LLM with history
+
+
+1. (create new chart in table bar) 
+    - /refine_data
+        - call LLM with history
+
+2. (change prompt on right pane)
+    - /refine_data
+        - call LLM with history
+        - in new Thread
+
 
 # Goal/Question
 
@@ -202,3 +214,4 @@ yarn start
     
 - input prompt box, send to Agent (/derive-data)
     - prompt -> Goal
+

@@ -18,6 +18,7 @@ import logging
 import json
 import html
 import pandas as pd
+from pprint import pprint
 
 from data_formulator.agents.agent_concept_derive import ConceptDeriveAgent
 from data_formulator.agents.agent_py_concept_derive import PyConceptDeriveAgent
@@ -539,6 +540,8 @@ def refine_data():
         content = request.get_json()        
         token = content["token"]
 
+        print("@@ request body of /refine-data:")
+        pprint(content, depth=2)
 
         client = get_client(content['model'])
 
